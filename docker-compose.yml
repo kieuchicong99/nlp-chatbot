@@ -1,0 +1,9 @@
+version : '3'
+services:
+  
+  chatbot:
+    build: .
+    command: python3 training.py
+    volumes:
+    - .:/src
+    restart: always
