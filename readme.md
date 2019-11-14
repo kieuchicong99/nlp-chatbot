@@ -12,11 +12,3 @@
 ### Data
 mở file data/intents.json
 
-### Training Model
-```
-python3 training.py
-```
-### Predict
-```
-python3 test.py
-```
