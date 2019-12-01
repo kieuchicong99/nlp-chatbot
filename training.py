@@ -1,16 +1,17 @@
 
+import pickle
+import json
+import random
+import tensorflow as tf
+import tflearn
+import numpy as np
 import nltk
 from nltk.stem.lancaster import LancasterStemmer
 
 stemmer = LancasterStemmer()
 
-import numpy as np
-import tflearn
-import tensorflow as tf
-import random
-import json
 
-with open('data/intents.json') as json_data:
+with open('data/pretty.json') as json_data:
     intents = json.load(json_data)
 
 
@@ -19,7 +20,7 @@ def ngrams(str, n):
     arr = []
     for i in range(len(tokens)):
         new_str = ''
-        if i == 0 and n>1:
+        if i == 0 and n > 1:
             new_str = '_'
             for j in range(n):
                 if j < n - 1:
@@ -64,7 +65,7 @@ print (len(documents), "documents")
 print (len(classes), "classes", classes)
 print (len(words), "unique stemmed words", words)
 
-#Create training data
+# Create training data
 training = []
 output = []
 
@@ -86,8 +87,8 @@ for doc in documents:
 random.shuffle(training)
 training = np.array(training)
 
-train_x = list(training[:,0])
-train_y = list(training[:,1])
+train_x = list(training[:, 0])
+train_y = list(training[:, 1])
 
 
 tf.reset_default_graph()
@@ -96,7 +97,8 @@ net = tflearn.input_data(shape=[None, len(train_x[0])])
 net = tflearn.fully_connected(net, 8)
 net = tflearn.fully_connected(net, 8)
 net = tflearn.fully_connected(net, len(train_y[0]), activation='softmax')
-net = tflearn.regression(net, optimizer='adam', loss='categorical_crossentropy')
+net = tflearn.regression(net, optimizer='adam',
+                         loss='categorical_crossentropy')
 
 model = tflearn.DNN(net, tensorboard_dir='tflearn_logs')
 
@@ -104,6 +106,5 @@ model.fit(train_x, train_y, n_epoch=1000, batch_size=8, show_metric=True)
 model.save('models/model.tflearn')
 
 
-import pickle
-pickle.dump( {'words':words, 'classes':classes, 'train_x':train_x, 'train_y':train_y}, open( "models/training_data", "wb" ) )
-
+pickle.dump({'words': words, 'classes': classes, 'train_x': train_x,
+             'train_y': train_y}, open("models/training_data", "wb"))

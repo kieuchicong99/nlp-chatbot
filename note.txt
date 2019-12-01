@@ -1,0 +1,1 @@
+cat /root/Desktop/nlp/chatbot-demo/data/new.json | python -m json.tool > /root/Desktop/nlp/chatbot-demo/data/pretty.json
