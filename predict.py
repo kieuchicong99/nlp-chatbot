@@ -15,7 +15,7 @@ classes = data['classes']
 train_x = data['train_x']
 train_y = data['train_y']
 
-with open('data/pretty.json') as json_data:
+with open('data/viet.json') as json_data:
     intents = json.load(json_data)
 
 
@@ -47,7 +47,7 @@ def bow(sentence, words, show_details=False):
             if w == s:
                 bag[i] = 1
                 if show_details:
-                    print ("found in bag: %s" % w)
+                    print("found in bag: %s" % w)
 
     return(np.array(bag))
 
@@ -83,11 +83,13 @@ def response(sentence, userID='1', show_details=False):
                 if i['tag'] == results[0][0]:
                     if 'context_set' in i:
                         if show_details:
-                            print ('context:', i['context_set'])
+                            print('context:', i['context_set'])
                         context[userID] = i['context_set']
                     if not 'context_filter' in i or (userID in context and 'context_filter' in i and i['context_filter'] == context[userID]):
                         if show_details:
-                            print ('tag:', i['tag'])
-                        return print(random.choice(i['responses']))
+                            print('tag:', i['tag'])
+
+                        return random.choice(i['responses'])
+                        
 
             results.pop(0)

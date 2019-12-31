@@ -7,50 +7,24 @@ import tflearn
 import numpy as np
 import nltk
 from nltk.stem.lancaster import LancasterStemmer
+from underthesea import word_tokenize as seg_vie
 
 stemmer = LancasterStemmer()
 
 
-with open('data/pretty.json') as json_data:
+with open('data/viet.json') as json_data:
     intents = json.load(json_data)
-
-
-def ngrams(str, n):
-    tokens = str.split(' ')
-    arr = []
-    for i in range(len(tokens)):
-        new_str = ''
-        if i == 0 and n > 1:
-            new_str = '_'
-            for j in range(n):
-                if j < n - 1:
-                    if (i + j) <= len(tokens):
-                        new_str += ' '+tokens[i+j]
-                    else:
-                        new_str += ' _'
-        else:
-            for j in range(n):
-                if j < n:
-                    if (i + j) < len(tokens):
-                        if j == 0:
-                            new_str += tokens[i+j]
-                        else:
-                            new_str += ' '+tokens[i+j]
-                    else:
-                        new_str += ' _'
-        arr.append(new_str)
-    return arr
 
 
 words = []
 classes = []
 documents = []
-ignore_words = ['?', 'và', 'à', 'ừ', 'ạ', 'vì', 'từng', 'một_cách']
+ignore_words = ['?', 'và', 'à', 'ừ', 'ạ', 'vì', 'từng', 'một_cách', 'nhé','rồi', 'vậy','.','!','nha']
 
 for intent in intents['intents']:
     for pattern in intent['patterns']:
-
-        w = nltk.word_tokenize(pattern)
+        sentiment = seg_vie(pattern, format="text")
+        w = nltk.word_tokenize(sentiment)
         words.extend(w)
         documents.append((w, intent['tag']))
         if intent['tag'] not in classes:
@@ -61,11 +35,12 @@ words = sorted(list(set(words)))
 
 classes = sorted(list(set(classes)))
 
-print (len(documents), "documents")
-print (len(classes), "classes", classes)
-print (len(words), "unique stemmed words", words)
+print(len(documents), "documents")
+print(len(classes), "classes", classes)
+print(len(words), "unique stemmed words", words)
 
 # Create training data
+
 training = []
 output = []
 
@@ -102,7 +77,7 @@ net = tflearn.regression(net, optimizer='adam',
 
 model = tflearn.DNN(net, tensorboard_dir='tflearn_logs')
 
-model.fit(train_x, train_y, n_epoch=1000, batch_size=8, show_metric=True)
+model.fit(train_x, train_y, n_epoch=2000, batch_size=8, show_metric=True)
 model.save('models/model.tflearn')
 
 
